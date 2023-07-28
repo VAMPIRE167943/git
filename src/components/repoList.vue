@@ -1,7 +1,11 @@
 <template>
  <div>
     <ul v-if="repos.length > 0">
-        <li v-for="repo in repos" :key="repo.id" @click="stalk(repo)" v-html="repo.name"></li>
+        <li v-for="repo in repos" :key="repo.id" @click="stalk(repo)" >
+            <RouterLink :to="`/repository/${repo.owner}/${repo.name}`">
+                {{ repo.name }}
+            </RouterLink>
+        </li>
     </ul>
     <div v-else>
         Found 0.
@@ -10,6 +14,7 @@
 </template>
 
 <script>
+import {RouterLink} from "vue-router"
 export default {
     props:{
         repos:{
@@ -22,8 +27,11 @@ export default {
     },
     methods:{
         stalk(repo){
-            this.$emit("stalkem-repos", repo)
+            this.$emit("stalkem-repo", repo)
         }
+    },
+    components:{
+        RouterLink
     }
 }
 </script>

@@ -13,7 +13,6 @@ import RepoDets from './components/repoDets.vue';
 import RepoList from './components/repoList.vue';
 import SearchBar from './components/searchBar.vue';
 
-
 export default {
   components: {
     SearchBar,
@@ -21,7 +20,7 @@ export default {
     RepoDets,
     ProblemHider,
     GotProblems
-}
+  }
 }
 </script>
 

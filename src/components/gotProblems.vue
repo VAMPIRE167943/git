@@ -20,10 +20,12 @@
         <div v-else>
             0 problems...in your imagination
         </div>
+        <RouterLink :to="`/repository/${owner}/${name}`">Back to Repo</RouterLink>
     </div>
 </template>
 
 <script>
+import {RouterLink} from "vue-router"
 export default {
     props:{
         problems:{
@@ -32,7 +34,12 @@ export default {
             default: function(){
                 return []
             }
-        }
+        },
+        owner: String,
+        name: String
+    },
+    components:{
+        RouterLink
     }
 }
 </script>

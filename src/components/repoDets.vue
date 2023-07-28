@@ -37,10 +37,12 @@
         <div v-else>
             0 repos selected.
         </div>
+        <RouterLink :to="`/repository/${owner}/${name}/issues`">View Issues</RouterLink>
     </div>
 </template>
 
 <script>
+import {RouterLink} from "vue-router"
 export default {
     props:{
         repo:{
@@ -54,7 +56,12 @@ export default {
             default: function(){
                 return []
             }
-        }
+        },
+        owner: String,
+        name: String
+    },
+    components:{
+        RouterLink
     }
 }
 </script>
