@@ -1,5 +1,5 @@
 <template>
-<SearchBar test="Hi Friday"></SearchBar>
+<SearchBar></SearchBar>
 </template>
 
 <script>
