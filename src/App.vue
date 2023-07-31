@@ -3,7 +3,7 @@
     <SearchBar @search="seek"></SearchBar>
     <RepoList :repos="searchres" @chooseRepo="handlechoice"></RepoList>
     <RepoDets :repo="selecrepo"></RepoDets>
-    <RepoIssueList :owner="selecrepo.owner.login" :name="selecrepo.name" :filter="problemhider" @updateproblems="therapy"></RepoIssueList>
+    <GotProblems owner="selecrepo.owner.login" :name="selecrepo.name" :filter="problemhider" @updateproblems="therapy"></GotProblems>
     <ProblemHider v-if="problemsvisible" @hideproblems="therapy"></ProblemHider>
     <div v-if="loadrepos">
       Loading...
@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import RepoIssueList from './components/RepoIssueList.vue';
+import GotProblems from './components/gotProblems.vue';
 import ProblemHider from './components/problemHider.vue';
 import ProblemsChart from './components/problemsChart.vue';
 import RepoDets from './components/repoDets.vue';
@@ -40,7 +40,7 @@ export default {
     RepoList,
     RepoDets,
     ProblemHider,
-    RepoIssueList,
+    GotProblems,
     ProblemsChart
 },
   data(){
