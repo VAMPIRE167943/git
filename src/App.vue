@@ -1,9 +1,9 @@
 <template>
   <div>
     <SearchBar @search="seek"></SearchBar>
-    <RepoList :repos="searchres" @chooseRepo="handlechoice"></RepoList>
-    <RepoDets :repo="selecrepo"></RepoDets>
-    <GotProblems owner="selecrepo.owner.login" :name="selecrepo.name" :filter="problemhider" @updateproblems="therapy"></GotProblems>
+    <RepoList :repos="searchres" @stalkrepo="handlechoice"></RepoList>
+    <RepoDets v-if="selecrepo" :repo="selecrepo"></RepoDets>
+    <GotProblems v-if="selecrepo" :owner="selecrepo.owner.login" :name="selecrepo.name" :hider="problemhider" @updateproblems="therapy"></GotProblems>
     <ProblemHider v-if="problemsvisible" @hideproblems="therapy"></ProblemHider>
     <div v-if="loadrepos">
       Loading...
@@ -32,7 +32,7 @@ import ProblemsChart from './components/problemsChart.vue';
 import RepoDets from './components/repoDets.vue';
 import RepoList from './components/repoList.vue';
 import SearchBar from './components/searchBar.vue';
-import axios from "axios"
+// import axios from "axios"
 
 export default {
   components: {
@@ -72,8 +72,8 @@ export default {
     seek(google, page = 1, perpage = 10){
       this.err.look = null
       this.loadrepos = true
-      axios.get(`https://api.github.com/search/repositories?q=${google}&page=${page}&per_page=${perpage}`).then((res) => {
-        this.searchres = res.data.items
+      fetch(`https://api.github.com/search/repositories?q=${google}&page=${page}&per_page=${perpage}`).then((res) => res.json()).then((data) => {
+        this.searchres = data.items
         this.loadrepos = false
       }).catch((err) => {
         console.log("Failed: ", err)
@@ -88,8 +88,8 @@ export default {
     getproblems(owner, name, hide, page = 1, perpage = 10){
       this.err.problems = null
       this.loadproblems = true
-      axios.get(`https://api.github.com/search/issues?q=repo:${owner}/${name}+state:${hide}&page=${page}&per_page=${perpage}`).then((res) => {
-        this.problems = res.data.items
+      fetch(`https://api.github.com/repos/${owner}/${name}/issues?state=${hide}&page=${page}&per_page=${perpage}`).then((res) => res.json()).then((data) => {
+        this.problems = data
         this.loadproblems = false
       }).catch((err) => {
         console.log("Failure: ", err)

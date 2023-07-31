@@ -32,7 +32,7 @@ export default {
     },
     methods:{
         stalk(repo){
-            this.$emit("stalkem-repo", repo)
+            this.$emit("stalkrepo", repo)
         },
         back(){
             if(this.page > 1){

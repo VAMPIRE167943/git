@@ -31,6 +31,36 @@
             </strong>
             {{ repo.open_issues_count }}
         </p>
+        <p>
+            <strong>
+                Language:
+            </strong>
+            {{ repo.language }}
+        </p>
+        <p>
+            <strong>
+                License:
+            </strong>
+            {{ repo.license ? repo.license.name : "N/A" }}
+        </p>
+        <p>
+            <strong>
+                Last Updated:
+            </strong>
+            {{ repo.updated_at }}
+        </p>
+        <p>
+            <strong>
+                Watchers Count:
+            </strong>
+            {{ repo.watchers_count }}
+        </p>
+        <p>
+            <strong>
+                Default Branch:
+            </strong>
+            {{ repo.default_branch }}
+        </p>
         <div v-if="problems">
 
         </div>
@@ -62,6 +92,9 @@ export default {
     },
     components:{
         RouterLink
+    },
+    mounted(){
+        console.log("Mounted", this.repo)
     }
 }
 </script>

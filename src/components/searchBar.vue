@@ -12,12 +12,9 @@ export default {
             google: "",
         }
     },
-    props:[
-        "test"
-    ],
     methods:{
         seek(){
-            this.$emit("look", this.google)
+            this.$emit("search", this.google)
         }
     }
 }

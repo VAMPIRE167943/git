@@ -8,7 +8,7 @@ import RepoDets from './components/repoDets.vue';
 
 var routes = [
     { path: '/', component: SearchBar },
-    { path: '/repository/:owner/:name', component: RepoDets }, // Route for RepositoryDetails
+    { path: '/repository/:owner/:name', component: RepoDets },
     { path: '/repository/:owner/:name/issues', component: GotProblems }
 ]
 var router = new createRouter({
