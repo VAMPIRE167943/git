@@ -4,7 +4,7 @@ import {createRouter, createWebHistory} from "vue-router"
 import SearchBar from './components/searchBar.vue';
 import GotProblems from './components/gotProblems.vue';
 import RepoDets from './components/repoDets.vue';
-
+import VueApexCharts from 'vue3-apexcharts';
 
 var routes = [
     { path: '/', component: SearchBar },
@@ -16,6 +16,7 @@ var router = new createRouter({
     routes
 })
 
-createApp(App)
-.use(router)
-.mount("#app")
+const app = createApp(App);
+//eslint-disable-next-line
+app.component('apex-chart', VueApexCharts);
+app.use(router).mount('#app');

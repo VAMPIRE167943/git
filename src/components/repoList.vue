@@ -21,6 +21,7 @@
 <script>
 import {RouterLink} from "vue-router"
 export default {
+    emits:["stalkrepo"],
     props:{
         repos:{
             type: Array,

@@ -2,9 +2,11 @@
   <div>
     <SearchBar @search="seek"></SearchBar>
     <RepoList :repos="searchres" @stalkrepo="handlechoice"></RepoList>
-    <RepoDets v-if="selecrepo" :repo="selecrepo"></RepoDets>
-    <GotProblems v-if="selecrepo" :owner="selecrepo.owner.login" :name="selecrepo.name" :hider="problemhider" @updateproblems="therapy"></GotProblems>
-    <ProblemHider v-if="problemsvisible" @hideproblems="therapy"></ProblemHider>
+    <router-view>
+      <RepoDets v-if="selecrepo" :repo="selecrepo"></RepoDets>
+    </router-view>
+    <GotProblems v-if="selecrepo" :selecrepo="selecrepo" :hider="problemhider"></GotProblems>
+    <ProblemHider v-if="problemsvisible && selecrepo" :selecrepo="selecrepo" :hider="problemhider" @hideproblems="therapy"></ProblemHider>
     <div v-if="loadrepos">
       Loading...
     </div>
@@ -22,13 +24,13 @@
       </p>
     </div>
   </div>
-  <ProblemsChart :chartstats="chartdata"></ProblemsChart>
+  <!-- <ProblemsChart :chartData="chartData" :chartOptions="chartOptions" /> -->
 </template>
 
 <script>
 import GotProblems from './components/gotProblems.vue';
 import ProblemHider from './components/problemHider.vue';
-import ProblemsChart from './components/problemsChart.vue';
+// import ProblemsChart from './components/problemsChart.vue';
 import RepoDets from './components/repoDets.vue';
 import RepoList from './components/repoList.vue';
 import SearchBar from './components/searchBar.vue';
@@ -41,22 +43,25 @@ export default {
     RepoDets,
     ProblemHider,
     GotProblems,
-    ProblemsChart
+    // ProblemsChart
 },
   data(){
     return{
-      chartdata: {
-        labels: ["Open", "Closed"],
-        datasets: [
-          {
-            data: [],
-
-          }
-        ]
-      },
+      // chartdata: {
+      //   labels: ["Open", "Closed"],
+      //   datasets: [{
+      //     label: "Issues",
+      //     backgroundColor: ['#f87979', '#7bd7a4'],
+      //     data: [10, 20]
+      //   }]
+      // },
+      // chartOptions: {
+      //   responsive: true,
+      //   maintainAspectRatio: false
+      // },
       searchres: [],
       selecrepo: null,
-      problemsvisible: false,
+      problemsvisible: true,
       owner: "",
       reponame: "",
       problemhider: "open",
@@ -68,6 +73,16 @@ export default {
       }
     }
   },
+  // computed:{
+  //   currentproblems(){
+  //     if(!this.chartdata) return 0
+  //     return this.chartdata.datasets[0].data[0]
+  //   },
+  //   noproblems(){
+  //     if(!this.chartdata) return 0
+  //     return this.chartdata.datasets[0].data[1]
+  //   }
+  // },
   methods:{
     seek(google, page = 1, perpage = 10){
       this.err.look = null

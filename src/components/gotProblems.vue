@@ -1,52 +1,34 @@
 <template>
     <div>
-        <h3>Issues List</h3>
-        <div v-if="loading">Loading...</div>
-        <ul v-else-if="problems.length > 0">
-            <li v-for="problem in problemhider" :key="problem.id">
-            <p>
-                <strong>
-                    Title:
-                </strong>
-                {{ problem.title }}
-            </p>
-            <p>
-                <strong>
-                    State:
-                </strong>
-                {{ problem.state }}
-            </p>
-        </li>
-        </ul>
-        <div v-else>
-            0 problems...in your imagination
+        <div v-if="selecrepo">
+            <h3>Issues List</h3>
+            <div v-if="loading" class="alert alert-info">Loading...</div>
+            <ul v-else-if="problemhider.length > 0" class="list-group">
+                <li v-for="problem in problemhider" :key="problem.id" class="list-group-item">
+                    <p><strong>Title:</strong> {{ problem.title }}</p>
+                    <p><strong>State:</strong> {{ problem.state }}</p>
+                </li>
+            </ul>
+            <div v-else class="alert alert-warning">0 problems... in your imagination</div>
+            <router-link :to="`/repository/${selecrepo.owner.login}/${selecrepo.name}`">Back to Repo</router-link>            <div v-if="error">{{ error.message }}</div>
+            <div v-if="error" class="alert alert-danger">{{ error.message }}</div>
         </div>
-        <RouterLink :to="`/repository/${owner}/${name}`">Back to Repo</RouterLink>
-        <div v-if="error">{{ error.message }}</div>
     </div>
 </template>
 
 <script>
-import {RouterLink} from "vue-router"
-import axios from "axios"
+// import axios from "axios"
 
 export default {
     props:{
-        owner: {
-            type: String,
-            required: true
-        },
-        name: {
-            type: String,
+        selecrepo:{
+            type: Object,
             required: true
         },
         hider:{
             type: String,
             required: true
         }
-    },
-    components:{
-        RouterLink
     },
     data(){
         return{
@@ -61,33 +43,52 @@ export default {
         }
     },
     watch: {
-        owner: "getproblems",
-        name: "getproblems",
-        hider: "getproblems"
+        selecrepo: {
+            immediate: true,
+            handler: "getproblems"
+        },
+        hider: {
+            immediate: true,
+            handler: "getproblems"
+        }
     },
     methods:{
-        getproblems(){
+        async getproblems(){
             this.loading = true
             this.error = null
             this.problems = []
-            if(this.owner && this.name && (this.hider === "open" || this.hider === "closed")){
-                var url = `https://api.github.com/search/issues?q=repo:${this.owner}/${this.name}+state:${this.hider}`
-                axios.get(url).then((res) => {
-                    this.problems = res.data.items
+            if(this.selecrepo && this.hider === "open" || this.hider === "closed"){
+                var url = `https://api.github.com/search/issues?q=repo:${this.selecrepo.owner.login}/${this.selecrepo.name}+state:${this.hider}`
+                try{
+                    var res = await fetch(url)
+                    var data = await res.json()
+                    this.problems = data.items
                     this.loading = false
-                }).catch((err) => {
-                    console.log("Failure: ", err)
+                }catch(err){
+                    console.log("Failure", err)
                     this.error = err
                     this.loading = false
-                })
+                }
+                // fetch(url).then((res) => {
+                //     if(!res.ok){
+                //         throw new Error("Bad network! Bad!")
+                //     }
+                //     return res.json()
+                // }).then((data) => {
+                //     this.problems = data.items
+                //     this.loading = false
+                // }).catch((err) => {
+                //     console.log("Failure: ", err)
+                //     this.error = err
+                //     this.loading = false
+                // })
             }else{
                 this.loading = false
             }
         }
+    },
+    created(){
+        this.getproblems()
     }
 }
 </script>
-
-<style>
-
-</style>
