@@ -1,72 +1,33 @@
 <template>
- <div>
-    <ul v-if="repopages.length > 0">
-        <li v-for="repo in repopages" :key="repo.id" @click="stalk(repo)" >
-            <RouterLink :to="`/repository/${repo.owner}/${repo.name}`">
-                {{ repo.name }}
-            </RouterLink>
-        </li>
+  <div>
+    <h3>Repos List</h3>
+    <ul v-if="repos.length > 0" class="list-group">
+      <li v-for="repo in repos" :key="repo.id" @click="stalk(repo)" class="list-group-item">
+        <RouterLink :to="`/repository/${repo.owner}/${repo.name}`">{{ repo.name }}</RouterLink>
+      </li>
     </ul>
-    <div v-else>
-        Found 0.
-    </div>
-    <div v-if="pages > 1">
-        <button @click="back" :diabled="page === 1">Previous Page</button>
-        <span>Page {{ page }} of {{ pages }}</span>
-        <button @click="forward" :disabled="page === pages">Next</button>
-    </div>
- </div>
+    <div v-else class="alert alert-info mt-3">Found 0.</div>
+  </div>
 </template>
 
 <script>
-import {RouterLink} from "vue-router"
+import { RouterLink } from 'vue-router';
+
 export default {
-    emits:["stalkrepo"],
-    props:{
-        repos:{
-            type: Array,
-            required: true,
-            default: function(){
-                return []
-            }
-        }
+  emits: ["stalkrepo"],
+  props: {
+    repos: {
+      type: Array,
+      required: true,
     },
-    methods:{
-        stalk(repo){
-            this.$emit("stalkrepo", repo)
-        },
-        back(){
-            if(this.page > 1){
-                this.page--
-            }
-        },
-        forward(){
-            if(this.page < this.pages){
-                this.page++
-            }
-        }
+  },
+  methods: {
+    stalk(repo) {
+      this.$emit("stalkrepo", repo);
     },
-    components:{
-        RouterLink
-    },
-    data(){
-        return{
-            page: 1,
-            pagethings: 10
-        }
-    },
-    computed:{
-        pages(){
-            return Math.ceil(this.repos.length / this.pagethings)
-        },
-        repopages(){
-            var beninging = (this.page - 1) * this.pagethings
-            return this.repos.slice(beninging, beninging + this.pagethings)
-        }
-    }
-}
+  },
+  components: {
+    RouterLink,
+  },
+};
 </script>
-
-<style>
-
-</style>

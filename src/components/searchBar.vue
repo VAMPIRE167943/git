@@ -1,7 +1,7 @@
 <template>
-    <div style="display: flex;">
-        <input type="text" v-model="google" placeholder="Click to search">
-        <button @click="seek">Search</button>
+    <div class="d-flex">
+        <input type="text" v-model="google" placeholder="Click to search" class="form-control me-2">
+        <button @click="seek" class="btn btn-primary">Search</button>
     </div>
 </template>
 

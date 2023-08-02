@@ -9,7 +9,7 @@ import VueApexCharts from 'vue3-apexcharts';
 var routes = [
     { path: '/', component: SearchBar },
     { path: '/repository/:owner/:name', component: RepoDets },
-    { path: '/repository/:owner/:name/issues', component: GotProblems }
+    { path: '/repository/:owner/:name/issues', component: GotProblems },
 ]
 var router = new createRouter({
     history: createWebHistory(),

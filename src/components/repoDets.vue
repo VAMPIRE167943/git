@@ -1,5 +1,5 @@
 <template>
-    <div v-if="repo">
+    <div v-if="repo" class="container mt-3">
         <h2 v-html="repo.name"></h2>
         <p>
             <strong>
@@ -61,18 +61,15 @@
             </strong>
             {{ repo.default_branch }}
         </p>
-        <div v-if="problems">
-
-        </div>
+        <div v-if="problems"></div>
         <div v-else>
             0 repos selected.
         </div>
-        <router-link :to="`/repository/${repo.owner.login}/${repo.name}/issues`">View Issues</router-link>
+        <router-link :to="`/repository/${repo.owner.login}/${repo.name}/issues`" class="btn btn-primary">View Issues</router-link>
     </div>
 </template>
 
 <script>
-// import {RouterLink} from "vue-router"
 export default {
     props:{
         repo:{
@@ -90,15 +87,8 @@ export default {
         owner: String,
         name: String
     },
-    // components:{
-    //     RouterLink
-    // },
     mounted(){
         console.log("Mounted", this.repo)
     }
 }
 </script>
-
-<style>
-
-</style>

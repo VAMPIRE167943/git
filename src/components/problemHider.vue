@@ -1,17 +1,17 @@
 <template>
-    <div>
+    <div class="container mt-3">
         <div v-if="selecrepo">
-            <h3>
-                Filter Issues
-            </h3>
-            <label>
-                <input type="radio" v-model="hide" value="open" @change="HideAndSeek">
-                    Open
+            <h3 class="mb-3">Filter Issues</h3>
+            <div class="btn-group" role="group">
+                <label class="btn btn-secondary" :class="{active: hide === 'open'}">
+                    <input type="radio" v-model="hide" value="open" @change="HideAndSeek">
+                        Open
                 </label>
-            <label>
-                <input type="radio" v-model="hide" value="closed" @change="HideAndSeek">
-                    Closed
-            </label>
+                <label class="btn btn-secondary" :class="{active: hide === 'closed'}">
+                    <input type="radio" v-model="hide" value="closed" @change="HideAndSeek">
+                        Closed
+                </label>
+            </div>
         </div>
     </div>
 </template>
@@ -38,19 +38,12 @@ export default {
     },
     methods:{
         HideAndSeek(){
-            this.$emit("hideproblems", this.hide)
+            if(this.problems){
+                this.$emit("hideproblems", this.hide)
+            }else{
+                this.$emit("hideproblems", "")
+            }
         }
     }
 }
 </script>
-
-<style>
-.radio-label {
-  display: block;
-  margin-bottom: 10px;
-}
-
-.radio-label input[type="radio"] {
-  margin-right: 5px;
-}
-</style>

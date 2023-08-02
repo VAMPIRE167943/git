@@ -1,30 +1,40 @@
 <template>
-  <div>
+  <div class="container mt-4">
     <SearchBar @search="seek"></SearchBar>
-    <RepoList :repos="searchres" @stalkrepo="handlechoice"></RepoList>
-    <router-view>
-      <RepoDets v-if="selecrepo" :repo="selecrepo"></RepoDets>
-    </router-view>
-    <GotProblems v-if="selecrepo" :selecrepo="selecrepo" :hider="problemhider"></GotProblems>
-    <ProblemHider v-if="problemsvisible && selecrepo" :selecrepo="selecrepo" :hider="problemhider" @hideproblems="therapy"></ProblemHider>
+    <div class="row">
+      <div class="col-md-6">
+        <RepoList :repos="searchres" :pagethings="10" @stalkrepo="showproblems"></RepoList>
+      </div>
+      <div class="col-md-6">
+        <RepoDets v-if="selecrepo" :repo="selecrepo"></RepoDets>
+        <GotProblems
+          v-if="selecrepo && problemsvisible"
+          :selecrepo="selecrepo"
+          :hider="problemhider"
+          @hideproblems="updateProblemHider"
+          @pagechange="handlePageChange"
+        ></GotProblems>
+        <ProblemHider
+          v-if="problemsvisible && selecrepo"
+          :selecrepo="selecrepo"
+          :hider="problemhider"
+          @hideproblems="updateProblemHider"
+        ></ProblemHider>
+      </div>
+    </div>
     <div v-if="loadrepos">
-      Loading...
+      <div class="alert alert-info mt-3">Loading...</div>
     </div>
     <div v-if="loadproblems">
-      Loading...
+      <div class="alert alert-info mt-3">Loading...</div>
     </div>
     <div v-if="err.look">
-      <p>
-        Failed getting repos: {{ err.look.message }}
-      </p>
+      <div class="alert alert-danger mt-3">Failed getting repos: {{ err.look.message }}</div>
     </div>
     <div v-if="err.problems">
-      <p>
-        Failed getting problems: {{ err.problems.message }}
-      </p>
+      <div class="alert alert-danger mt-3">Failed getting problems: {{ err.problems.message }}</div>
     </div>
   </div>
-  <!-- <ProblemsChart :chartData="chartData" :chartOptions="chartOptions" /> -->
 </template>
 
 <script>
@@ -34,7 +44,6 @@ import ProblemHider from './components/problemHider.vue';
 import RepoDets from './components/repoDets.vue';
 import RepoList from './components/repoList.vue';
 import SearchBar from './components/searchBar.vue';
-// import axios from "axios"
 
 export default {
   components: {
@@ -44,21 +53,10 @@ export default {
     ProblemHider,
     GotProblems,
     // ProblemsChart
-},
-  data(){
-    return{
-      // chartdata: {
-      //   labels: ["Open", "Closed"],
-      //   datasets: [{
-      //     label: "Issues",
-      //     backgroundColor: ['#f87979', '#7bd7a4'],
-      //     data: [10, 20]
-      //   }]
-      // },
-      // chartOptions: {
-      //   responsive: true,
-      //   maintainAspectRatio: false
-      // },
+  },
+  data() {
+    return {
+      problems: [],
       searchres: [],
       selecrepo: null,
       problemsvisible: true,
@@ -67,69 +65,61 @@ export default {
       problemhider: "open",
       loadrepos: false,
       loadproblems: false,
-      err:{
+      err: {
         look: null,
-        problems:null
-      }
+        problems: null,
+      },
+    };
+  },
+  computed:{
+    allProblems(){
+      return this.problems
     }
   },
-  // computed:{
-  //   currentproblems(){
-  //     if(!this.chartdata) return 0
-  //     return this.chartdata.datasets[0].data[0]
-  //   },
-  //   noproblems(){
-  //     if(!this.chartdata) return 0
-  //     return this.chartdata.datasets[0].data[1]
-  //   }
-  // },
-  methods:{
-    seek(google, page = 1, perpage = 10){
-      this.err.look = null
-      this.loadrepos = true
-      fetch(`https://api.github.com/search/repositories?q=${google}&page=${page}&per_page=${perpage}`).then((res) => res.json()).then((data) => {
-        this.searchres = data.items
-        this.loadrepos = false
-      }).catch((err) => {
-        console.log("Failed: ", err)
-        this.err.look = err
-        this.loadrepos = false
-      })
+  methods: {
+    seek(google, page = 1, perpage = 10) {
+      this.err.look = null;
+      this.loadrepos = true;
+      fetch(`https://api.github.com/search/repositories?q=${google}&page=${page}&per_page=${perpage}`)
+        .then((res) => res.json())
+        .then((data) => {
+          this.searchres = data.items;
+          this.loadrepos = false;
+        })
+        .catch((err) => {
+          console.log("Failed: ", err);
+          this.err.look = err;
+          this.loadrepos = false;
+        });
     },
-    handlechoice(repo){
+    showproblems(repo) {
       this.selecrepo = repo
-      this.getproblems(repo.owner.login, repo.name, this.problemhider)
+      this.problemhider = "open";
     },
-    getproblems(owner, name, hide, page = 1, perpage = 10){
-      this.err.problems = null
-      this.loadproblems = true
-      fetch(`https://api.github.com/repos/${owner}/${name}/issues?state=${hide}&page=${page}&per_page=${perpage}`).then((res) => res.json()).then((data) => {
-        this.problems = data
-        this.loadproblems = false
-      }).catch((err) => {
-        console.log("Failure: ", err)
-        this.err.problems = err
-        this.loadproblems = false
-      })
-    },
-    therapy(hide){
+    updateProblemHider(hide) {
       this.problemhider = hide
-      if(this.selecrepo){
-        this.getproblems(this.selecrepo.owner.login, this.selecrepo.name, hide)
+      if (this.selecrepo) {
+        this.getproblems(this.selecrepo.owner.login, this.selecrepo.name, hide);
       }
     },
-    showdets(repo){
-      this.selecrepo = repo
+    getproblems(owner, name, hide, page = 1, perpage = 10) {
+      this.err.problems = null;
+      this.loadproblems = true;
+      fetch(`https://api.github.com/repos/${owner}/${name}/issues?state=${hide}&page=${page}&per_page=${perpage}`)
+        .then((res) => res.json())
+        .then((data) => {
+          this.selecrepo.problems = data;
+          this.loadproblems = false;
+        })
+        .catch((err) => {
+          console.log("Failure: ", err);
+          this.err.problems = err;
+          this.loadproblems = false;
+        });
     },
-    showproblems(owner, name){
-      this.owner = owner,
-      this.reponame = name,
-      this.problemsvisible = true
+    handlePageChange(page){
+      this.getproblems(this.selecrepo.owner.login, this.selecrepo.name, this.problemhider, page)
     }
-  }
-}
+  },
+};
 </script>
-
-<style>
-
-</style>
