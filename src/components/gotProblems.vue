@@ -11,28 +11,30 @@
       </ul>
       <div v-else class="alert alert-warning">0 problems... in your imagination</div>
       <div v-if="visibleProblems.length > 0">
-        <router-link :to="`/repository/${selecrepo.owner.login}/${selecrepo.name}`">Back to Repo</router-link>
+        <router-link :to="`/repository/${selecrepo.owner.login}/${selecrepo.name}`" class="btn btn-secondary mt-3">Back to Repo</router-link>
       </div>
       <div v-if="error" class="alert alert-danger">{{ error.message }}</div>
-      <nav v-if="hasPages" aria-label="Page navigation">
-        <ul class="pagination">
-          <li class="page-item" :class="{ disabled: currentPage === 1 }">
-            <a class="page-link" href="#" @click="goToPage(currentPage - 1)" aria-label="Previous">
-              <span aria-hidden="true">&laquo;</span>
-              <span class="sr-only">Previous</span>
-            </a>
-          </li>
-          <li class="page-item" v-for="pageNumber in totalPages" :key="pageNumber" :class="{ active: pageNumber === currentPage }">
-            <a class="page-link" href="#" @click="goToPage(pageNumber)">{{ pageNumber }}</a>
-          </li>
-          <li class="page-item" :class="{ disabled: currentPage === totalPages }">
-            <a class="page-link" href="#" @click="goToPage(currentPage + 1)" aria-label="Next">
-              <span aria-hidden="true">&raquo;</span>
-              <span class="sr-only">Next</span>
-            </a>
-          </li>
-        </ul>
-      </nav>
+      <div class="pagination-container">
+        <nav class="pagination-content" aria-label="Page navigation">
+          <ul class="pagination justify-content-center">
+            <li class="page-item" :class="{ disabled: currentPage === 1 }">
+              <a class="page-link" href="#" @click="goToPage(currentPage - 1)" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+                <span class="sr-only"> Previous</span>
+              </a>
+            </li>
+            <li class="page-item" v-for="pageNumber in totalPages" :key="pageNumber" :class="{ active: pageNumber === currentPage }">
+              <a class="page-link" href="#" @click="goToPage(pageNumber)">{{ pageNumber }}</a>
+            </li>
+            <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+              <a class="page-link" href="#" @click="goToPage(currentPage + 1)" aria-label="Next">
+                <span class="sr-only">Next </span>
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
     </div>
   </div>
 </template>
@@ -63,43 +65,63 @@ export default {
       return this.allproblems.length > 0
     },
     totalPages() {
+      console.log("Calculating...")
+      console.log("perPage:", this.perPage);
+      console.log("allproblems.length:", this.allproblems.length);
       return Math.ceil(this.allproblems.length / this.perPage);
     },
     visibleProblems() {
+      if(this.allproblems.length === 0){
+        return []
+      }
+      console.log("currentPage:", this.currentPage);
+      console.log("perPage:", this.perPage);
+      console.log("allproblems.length:", this.allproblems.length);
       var startIndex = (this.currentPage - 1) * this.perPage;
       return this.allproblems.slice(startIndex, startIndex + this.perPage);
-    },
+    }
   },
   methods: {
-    // dosomemeth(){
-    //   this.totalPages = Math.ceil(this.allproblems.length / this.perPage)
-    // },
+    logTotalPages() {
+      console.log("Total pages:", this.totalPages);
+    },
     async fetchProblems() {
       this.loading = true;
       this.error = null;
       try {
         var owner = this.selecrepo.owner.login;
         var name = this.selecrepo.name;
-        var token = "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";
-        var res = await fetch(
-          `https://api.github.com/repos/${owner}/${name}/issues?state=${this.hider}&per_page=${this.perPage}&page=${this.currentPage}`,
-          {
-            headers: {
-              Authorization: `token ${token}`,
-            },
+        var token = "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";
+        var everyproblem = []
+        var currentPage = 1
+        var totalPages = 1
+        while(currentPage <= totalPages){
+          var res = await fetch(
+            `https://api.github.com/repos/${owner}/${name}/issues?state=${this.hider}&per_page=${this.perPage}&page=${this.currentPage}`,
+            {
+              headers: {
+                Authorization: `token ${token}`,
+              },
+            }
+          );
+          if (!res.ok) {
+            throw new Error("Failed to fetch issues.");
           }
-        );
-        if (!res.ok) {
-          throw new Error("Failed to fetch issues.");
+          var data = await res.json();
+          everyproblem.push(...data)
+          currentPage++
+          totalPages = Math.ceil(res.headers.get("Link").match(/page=(\d+)>; rel="last"/)[1])
         }
-        var data = await res.json();
-        this.allproblems = data.map((problem) => ({
+        this.allproblems = everyproblem.map((problem) => ({
           id: problem.id,
           title: problem.title,
           state: problem.state,
-        }));
+        }))
         console.log("Issues fetched: ", this.allproblems.length)
-        // this.dosomemeth()
+        console.log("All issues: ", this.allproblems)
+        console.log("perPage:", this.perPage);
+        console.log("allproblems.length:", this.allproblems.length);
+        this.logTotalPages()
       } catch (err) {
         console.log("Failure: ", err);
         this.error = err;
@@ -113,6 +135,31 @@ export default {
         await this.fetchProblems();
       }
     },
+    updatepages(){
+        this.totalPages = Math.ceil(this.allproblems.length / this.perPage);
+        console.log("Updating totalPages...", this.totalPages);
+        console.log("allproblems.length:", this.allproblems.length);
+        console.log("perPage:", this.perPage);
+        this.logTotalPages()
+    },
+    updateVisibleProblems() {
+      this.$nextTick(() => {
+        console.log("Updating visibleProblems...");
+        console.log("currentPage:", this.currentPage);
+        console.log("perPage:", this.perPage);
+        console.log("allproblems.length:", this.allproblems.length);
+        console.log("visibleProblems:", this.visibleProblems);
+      });
+    },
+    async countpages(){
+      this.loading = true
+      this.$nextTick(() => {
+        setTimeout(() => {
+          this.totalPages = Math.ceil(this.allproblems.length / this.perPage)
+          this.loading = false
+        }, 1000)
+      });
+    }
   },
   watch: {
     selecrepo: {
@@ -128,14 +175,39 @@ export default {
       this.allproblems = [];
       this.fetchProblems();
     },
-    // allproblems:{
-    //   handler(){
-    //     this.$nextTick(() => {
-    //       this.currentPage = 1
-    //     })
-    //   },
-    //   deep: true
-    // }
+    allproblems:{
+      handler(){
+        this.$nextTick(() => {
+        this.currentPage = 1
+        })
+        this.logTotalPages();
+      },
+      deep: true,
+    },
+    perPage(){
+      this.updatepages()
+      this.updateVisibleProblems()
+      this.logTotalPages()
+    },
+    currentPage(newpage){
+      console.log("Current page: ", newpage)
+    }
+  },
+  created(){
+    this.currentPage = this.currentPageQueryParam;
+    this.fetchProblems();
   }
 };
 </script>
+
+<style>
+.pagination-container {
+  overflow-x: auto;
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+}
+.pagination-nav {
+  padding: 0 10px;
+}
+</style>

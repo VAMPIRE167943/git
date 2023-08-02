@@ -9,6 +9,7 @@
         <RepoDets v-if="selecrepo" :repo="selecrepo"></RepoDets>
         <GotProblems
           v-if="selecrepo && problemsvisible"
+          :key="allproblems.length"
           :selecrepo="selecrepo"
           :hider="problemhider"
           @hideproblems="updateProblemHider"
@@ -72,25 +73,32 @@ export default {
     };
   },
   computed:{
-    allProblems(){
+    allproblems(){
       return this.problems
     }
   },
   methods: {
-    seek(google, page = 1, perpage = 10) {
+    async seek(google, page = 1, perpage = 10) {
       this.err.look = null;
       this.loadrepos = true;
-      fetch(`https://api.github.com/search/repositories?q=${google}&page=${page}&per_page=${perpage}`)
-        .then((res) => res.json())
-        .then((data) => {
-          this.searchres = data.items;
-          this.loadrepos = false;
+      try{
+        var token = "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";
+        var res = await fetch(`https://api.github.com/search/repositories?q=${google}&page=${page}&per_page=${perpage}`, {
+          headers:{
+            Authorization: `token ${token}`
+          }
         })
-        .catch((err) => {
-          console.log("Failed: ", err);
-          this.err.look = err;
-          this.loadrepos = false;
-        });
+        if(!res.ok){
+          throw new Error("Failed to get repos")
+        }
+        var data = await res.json()
+        this.searchres = data.items;
+        this.loadrepos = false;
+      }catch(err){
+        console.log("Failed: ", err);
+        this.err.look = err;
+        this.loadrepos = false;
+      }
     },
     showproblems(repo) {
       this.selecrepo = repo
@@ -102,20 +110,27 @@ export default {
         this.getproblems(this.selecrepo.owner.login, this.selecrepo.name, hide);
       }
     },
-    getproblems(owner, name, hide, page = 1, perpage = 10) {
+    async getproblems(owner, name, hide, page = 1, perpage = 10) {
       this.err.problems = null;
       this.loadproblems = true;
-      fetch(`https://api.github.com/repos/${owner}/${name}/issues?state=${hide}&page=${page}&per_page=${perpage}`)
-        .then((res) => res.json())
-        .then((data) => {
-          this.selecrepo.problems = data;
-          this.loadproblems = false;
+      try{
+        var token = "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";
+        var res = await fetch(`https://api.github.com/repos/${owner}/${name}/issues?state=${hide}&page=${page}&per_page=${perpage}`, {
+          headers: {
+            Authorization: `token ${token}`,
+          },
         })
-        .catch((err) => {
-          console.log("Failure: ", err);
-          this.err.problems = err;
-          this.loadproblems = false;
-        });
+        if(!res.ok){
+          throw new Error("Failed to fetch issues.");
+        }
+        var data = await res.json()
+        this.selecrepo.problems = data;
+        this.loadproblems = false;
+      }catch(err){
+        console.log("Failure: ", err);
+        this.err.problems = err;
+        this.loadproblems = false;
+      }
     },
     handlePageChange(page){
       this.getproblems(this.selecrepo.owner.login, this.selecrepo.name, this.problemhider, page)

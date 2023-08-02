@@ -1,16 +1,18 @@
 <template>
-    <div class="container mt-3">
+    <div class="container mt-4">
         <div v-if="selecrepo">
             <h3 class="mb-3">Filter Issues</h3>
             <div class="btn-group" role="group">
-                <label class="btn btn-secondary" :class="{active: hide === 'open'}">
-                    <input type="radio" v-model="hide" value="open" @change="HideAndSeek">
+                <div class="radio-container"> <!-- Add a container around the radio buttons -->
+                    <label class="btn btn-secondary" :class="{active: hide === 'open'}">
+                        <input type="radio" v-model="hide" value="open" @change="HideAndSeek">
                         Open
-                </label>
-                <label class="btn btn-secondary" :class="{active: hide === 'closed'}">
-                    <input type="radio" v-model="hide" value="closed" @change="HideAndSeek">
+                    </label>
+                    <label class="btn btn-secondary" :class="{active: hide === 'closed'}">
+                        <input type="radio" v-model="hide" value="closed" @change="HideAndSeek">
                         Closed
-                </label>
+                    </label>
+                </div>
             </div>
         </div>
     </div>
@@ -47,3 +49,9 @@ export default {
     }
 }
 </script>
+
+<style>
+.radio-container{
+    margin-bottom: 10px;
+}
+</style>
