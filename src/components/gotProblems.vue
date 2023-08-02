@@ -11,7 +11,8 @@
       </ul>
       <div v-else class="alert alert-warning">0 problems... in your imagination</div>
       <div v-if="visibleProblems.length > 0">
-        <router-link :to="`/repository/${selecrepo.owner.login}/${selecrepo.name}`" class="btn btn-secondary mt-3">Back to Repo</router-link>
+        <router-link :to="`/repository/${selecrepo.owner.login}/${selecrepo.name}`" class="btn btn-secondary mt-3">Back to
+          Repo</router-link>
       </div>
       <div v-if="error" class="alert alert-danger">{{ error.message }}</div>
       <div class="pagination-container">
@@ -23,7 +24,8 @@
                 <span class="sr-only"> Previous</span>
               </a>
             </li>
-            <li class="page-item" v-for="pageNumber in totalPages" :key="pageNumber" :class="{ active: pageNumber === currentPage }">
+            <li class="page-item" v-for="pageNumber in totalPages" :key="pageNumber"
+              :class="{ active: pageNumber === currentPage }">
               <a class="page-link" href="#" @click="goToPage(pageNumber)">{{ pageNumber }}</a>
             </li>
             <li class="page-item" :class="{ disabled: currentPage === totalPages }">
@@ -51,7 +53,8 @@ export default {
       required: true,
     },
   },
-  data() {
+  data()
+  {
     return {
       loading: false,
       currentPage: 1,
@@ -61,41 +64,49 @@ export default {
     };
   },
   computed: {
-    hasPages() {
+    hasPages()
+    {
       return this.allproblems.length > 0
     },
-    totalPages() {
-      console.log("Calculating...")
-      console.log("perPage:", this.perPage);
-      console.log("allproblems.length:", this.allproblems.length);
+    totalPages()
+    {
+    //   console.log("Calculating...")
+    //   console.log("perPage:", this.perPage);
+    //   console.log("allproblems.length:", this.allproblems.length);
       return Math.ceil(this.allproblems.length / this.perPage);
     },
-    visibleProblems() {
-      if(this.allproblems.length === 0){
+    visibleProblems()
+    {
+      if (this.allproblems.length === 0)
+      {
         return []
       }
-      console.log("currentPage:", this.currentPage);
-      console.log("perPage:", this.perPage);
-      console.log("allproblems.length:", this.allproblems.length);
+      // console.log("currentPage:", this.currentPage);
+      // console.log("perPage:", this.perPage);
+      // console.log("allproblems.length:", this.allproblems.length);
       var startIndex = (this.currentPage - 1) * this.perPage;
       return this.allproblems.slice(startIndex, startIndex + this.perPage);
     }
   },
   methods: {
-    logTotalPages() {
-      console.log("Total pages:", this.totalPages);
+    logTotalPages()
+    {
+      // console.log("Total pages:", this.totalPages);
     },
-    async fetchProblems() {
+    async fetchProblems()
+    {
       this.loading = true;
       this.error = null;
-      try {
+      try
+      {
         var owner = this.selecrepo.owner.login;
         var name = this.selecrepo.name;
         var token = "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";
         var everyproblem = []
         var currentPage = 1
         var totalPages = 1
-        while(currentPage <= totalPages){
+        while (currentPage <= totalPages)
+        {
           var res = await fetch(
             `https://api.github.com/repos/${owner}/${name}/issues?state=${this.hider}&per_page=${this.perPage}&page=${this.currentPage}`,
             {
@@ -104,7 +115,8 @@ export default {
               },
             }
           );
-          if (!res.ok) {
+          if (!res.ok)
+          {
             throw new Error("Failed to fetch issues.");
           }
           var data = await res.json();
@@ -122,28 +134,35 @@ export default {
         console.log("perPage:", this.perPage);
         console.log("allproblems.length:", this.allproblems.length);
         this.logTotalPages()
-      } catch (err) {
+      } catch (err)
+      {
         console.log("Failure: ", err);
         this.error = err;
-      } finally {
+      } finally
+      {
         this.loading = false;
       }
     },
-    async goToPage(page) {
-      if (page >= 1 && page <= this.totalPages) {
+    async goToPage(page)
+    {
+      if (page >= 1 && page <= this.totalPages)
+      {
         this.currentPage = page;
         await this.fetchProblems();
       }
     },
-    updatepages(){
-        this.totalPages = Math.ceil(this.allproblems.length / this.perPage);
-        console.log("Updating totalPages...", this.totalPages);
-        console.log("allproblems.length:", this.allproblems.length);
-        console.log("perPage:", this.perPage);
-        this.logTotalPages()
+    updatepages()
+    {
+      this.totalPages = Math.ceil(this.allproblems.length / this.perPage);
+      console.log("Updating totalPages...", this.totalPages);
+      console.log("allproblems.length:", this.allproblems.length);
+      console.log("perPage:", this.perPage);
+      this.logTotalPages()
     },
-    updateVisibleProblems() {
-      this.$nextTick(() => {
+    updateVisibleProblems()
+    {
+      this.$nextTick(() =>
+      {
         console.log("Updating visibleProblems...");
         console.log("currentPage:", this.currentPage);
         console.log("perPage:", this.perPage);
@@ -151,10 +170,13 @@ export default {
         console.log("visibleProblems:", this.visibleProblems);
       });
     },
-    async countpages(){
+    async countpages()
+    {
       this.loading = true
-      this.$nextTick(() => {
-        setTimeout(() => {
+      this.$nextTick(() =>
+      {
+        setTimeout(() =>
+        {
           this.totalPages = Math.ceil(this.allproblems.length / this.perPage)
           this.loading = false
         }, 1000)
@@ -164,50 +186,56 @@ export default {
   watch: {
     selecrepo: {
       immediate: true,
-      handler() {
+      handler()
+      {
         this.currentPage = 1;
         this.allproblems = [];
         this.fetchProblems();
       },
     },
-    hider() {
+    hider()
+    {
       this.currentPage = 1;
       this.allproblems = [];
       this.fetchProblems();
     },
-    allproblems:{
-      handler(){
-        this.$nextTick(() => {
-        this.currentPage = 1
+    allproblems: {
+      handler()
+      {
+        this.$nextTick(() =>
+        {
+          this.currentPage = 1
         })
         this.logTotalPages();
       },
       deep: true,
     },
-    perPage(){
+    perPage()
+    {
       this.updatepages()
       this.updateVisibleProblems()
       this.logTotalPages()
     },
-    currentPage(newpage){
+    currentPage(newpage)
+    {
       console.log("Current page: ", newpage)
     }
   },
-  created(){
+  created()
+  {
     this.currentPage = this.currentPageQueryParam;
     this.fetchProblems();
   }
 };
 </script>
 
-<style>
-.pagination-container {
+<style>.pagination-container {
   overflow-x: auto;
   max-width: 100%;
   display: flex;
   align-items: center;
 }
+
 .pagination-nav {
   padding: 0 10px;
-}
-</style>
+}</style>
