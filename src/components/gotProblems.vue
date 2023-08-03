@@ -91,7 +91,7 @@ export default {
       {
         var owner = this.selecrepo.owner.login;
         var name = this.selecrepo.name;
-        var token = "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";
+        var token = "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";
         var everyproblem = []
         var currentPage = 1
         var totalPages = 1
