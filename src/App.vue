@@ -35,6 +35,7 @@
     <div v-if="err.problems">
       <div class="alert alert-danger mt-3">Failed getting problems: {{ err.problems.message }}</div>
     </div>
+    <!-- <ProblemsChart :selecrepo="selecrepo"></ProblemsChart> -->
   </div>
 </template>
 
@@ -54,7 +55,7 @@ export default {
     ProblemHider,
     GotProblems,
     // ProblemsChart
-  },
+},
   data() {
     return {
       problems: [],
@@ -82,7 +83,7 @@ export default {
       this.err.look = null;
       this.loadrepos = true;
       try{
-        var token = "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";
+        var token = "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";
         var res = await fetch(`https://api.github.com/search/repositories?q=${google}&page=${page}&per_page=${perpage}`, {
           headers:{
             Authorization: `token ${token}`
@@ -114,7 +115,7 @@ export default {
       this.err.problems = null;
       this.loadproblems = true;
       try{
-        var token = "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";
+        var token = "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";
         var res = await fetch(`https://api.github.com/repos/${owner}/${name}/issues?state=${hide}&page=${page}&per_page=${perpage}`, {
           headers: {
             Authorization: `token ${token}`,

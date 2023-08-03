@@ -70,9 +70,6 @@ export default {
     },
     totalPages()
     {
-    //   console.log("Calculating...")
-    //   console.log("perPage:", this.perPage);
-    //   console.log("allproblems.length:", this.allproblems.length);
       return Math.ceil(this.allproblems.length / this.perPage);
     },
     visibleProblems()
@@ -81,18 +78,11 @@ export default {
       {
         return []
       }
-      // console.log("currentPage:", this.currentPage);
-      // console.log("perPage:", this.perPage);
-      // console.log("allproblems.length:", this.allproblems.length);
       var startIndex = (this.currentPage - 1) * this.perPage;
       return this.allproblems.slice(startIndex, startIndex + this.perPage);
     }
   },
   methods: {
-    logTotalPages()
-    {
-      // console.log("Total pages:", this.totalPages);
-    },
     async fetchProblems()
     {
       this.loading = true;
@@ -101,7 +91,7 @@ export default {
       {
         var owner = this.selecrepo.owner.login;
         var name = this.selecrepo.name;
-        var token = "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";
+        var token = "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";
         var everyproblem = []
         var currentPage = 1
         var totalPages = 1
@@ -132,8 +122,7 @@ export default {
         console.log("Issues fetched: ", this.allproblems.length)
         console.log("All issues: ", this.allproblems)
         console.log("perPage:", this.perPage);
-        console.log("allproblems.length:", this.allproblems.length);
-        this.logTotalPages()
+        console.log("allproblems.length:", this.allproblems.length)
       } catch (err)
       {
         console.log("Failure: ", err);
@@ -156,8 +145,7 @@ export default {
       this.totalPages = Math.ceil(this.allproblems.length / this.perPage);
       console.log("Updating totalPages...", this.totalPages);
       console.log("allproblems.length:", this.allproblems.length);
-      console.log("perPage:", this.perPage);
-      this.logTotalPages()
+      console.log("perPage:", this.perPage)
     },
     updateVisibleProblems()
     {
@@ -206,7 +194,6 @@ export default {
         {
           this.currentPage = 1
         })
-        this.logTotalPages();
       },
       deep: true,
     },
@@ -214,7 +201,6 @@ export default {
     {
       this.updatepages()
       this.updateVisibleProblems()
-      this.logTotalPages()
     },
     currentPage(newpage)
     {

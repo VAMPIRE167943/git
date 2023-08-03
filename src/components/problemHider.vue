@@ -3,7 +3,7 @@
         <div v-if="selecrepo">
             <h3 class="mb-3">Filter Issues</h3>
             <div class="btn-group" role="group">
-                <div class="radio-container"> <!-- Add a container around the radio buttons -->
+                <div class="radio-container">
                     <label class="btn btn-secondary" :class="{active: hide === 'open'}">
                         <input type="radio" v-model="hide" value="open" @change="HideAndSeek">
                         Open
