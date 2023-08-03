@@ -25,7 +25,7 @@
     <div v-if="err.problems">
       <div class="alert alert-danger mt-3">Failed getting problems: {{ err.problems.message }}</div>
     </div>
-    <!-- <ProblemsChart :selecrepo="selecrepo"></ProblemsChart> -->
+    <!-- <ProblemsChart v-if="selecrepo" :selecrepo="selecrepo"></ProblemsChart> -->
   </div>
 </template>
 
@@ -61,114 +61,43 @@ export default {
       err: {
         look: null,
         problems: null,
-      },
-      currentPage: 1,
-      perPage: 10
+      }
     };
   },
   computed: {
     allproblems()
     {
       return this.problems
-    },
-    totalPages()
-    {
-      return Math.ceil(this.searchres.length / this.perPage);
-    },
-    paginatedRepos()
-    {
-      if (this.searchres.length === 0)
-      {
-        return [];
-      }
-      const start = (this.currentPage - 1) * this.perPage;
-      return this.searchres.slice(start, start + this.perPage);
-    },
+    }
   },
   methods: {
-    // async seek(google, page = 1, perpage = 100)
-    // {
-    //   this.err.look = null;
-    //   this.loadrepos = true;
-    //   try{
-    //     var allrepos = []
-    //     var currentPage = 1
-    //     var totalPages = 1
-    //     var token = "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";
-    //     while (currentPage <= totalPages)
-    //     {
-    //       var res = await fetch(
-    //         `https://api.github.com/search/repositories?q=${google}&page=${page}&per_page=${perpage}`,
-    //         {
-    //           headers: {
-    //             Authorization: `token ${token}`
-    //           }
-    //         }
-    //         )
-    //         if (!res.ok)
-    //         {
-    //           throw new Error("Failed to get repos")
-    //         }
-    //         var data = await res.json()
-    //   // }
-
-    //   // }
-    //   // try
-    //   // {
-    //   //   this.searchres = data.items
-    //   //   this.loadrepos = false;
-    //   // } catch (err)
-    //   // {
-    //   //   console.log("Failed: ", err);
-    //   //   this.err.look = err;
-    //   //   this.loadrepos = false;
-    //   // }
-    // },
-    async seek(google)
+    async seek(google, page = 1, perpage = 100)
     {
       this.err.look = null;
       this.loadrepos = true;
-
-      try
-      {
-        var token = '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';
-        var currentPage = 1;
-        var allrepos = [];
-        var delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-        //eslint-disable-next-line
-        while (true)
-        {
-          var res = await fetch(
-            `https://api.github.com/search/repositories?q=${google}&page=${currentPage}&per_page=${this.perPage}`,
-            {
-              headers: {
-                Authorization: `token ${token}`,
-              },
+      try{
+        var token = "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"
+        var res = await fetch(
+          `https://api.github.com/search/repositories?q=${google}&page=${page}&per_page=${perpage}`,
+          {
+            headers: {
+              Authorization: `token ${token}`
             }
-          );
-          if (!res.ok)
-          {
-            throw new Error('Failed to get repos');
           }
-          var data = await res.json();
-          allrepos.push(...data.items);
-          currentPage++;
-          var linkHeader = res.headers.get('Link');
-          if (!linkHeader || !linkHeader.includes('rel="next"'))
-          {
-            break;
-          }
-          await delay(500);
+        )
+        if (!res.ok)
+        {
+          throw new Error("Failed to get repos")
         }
-        this.searchres = allrepos.map((repo) => ({
-          name: repo.name,
-        }));
-      } catch (err)
+        var data = await res.json()
+        this.searchres = data.items
+        this.loadrepos = false;
+      }catch (err)
       {
-        console.log('Failure: ', err);
+        console.log("Failed: ", err);
         this.err.look = err;
+        this.loadrepos = false;
       }
-      this.loadrepos = false;
     },
     showproblems(repo)
     {
@@ -189,7 +118,7 @@ export default {
       this.loadproblems = true;
       try
       {
-        var token = "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";
+        var token = "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";
         var res = await fetch(`https://api.github.com/repos/${owner}/${name}/issues?state=${hide}&page=${page}&per_page=${perpage}`, {
           headers: {
             Authorization: `token ${token}`,
