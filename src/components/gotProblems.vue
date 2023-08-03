@@ -91,7 +91,7 @@ export default {
       {
         var owner = this.selecrepo.owner.login;
         var name = this.selecrepo.name;
-        var token = "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";
+        var token = "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";
         var everyproblem = []
         var currentPage = 1
         var totalPages = 1
