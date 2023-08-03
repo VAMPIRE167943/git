@@ -91,7 +91,7 @@ export default {
       {
         var owner = this.selecrepo.owner.login;
         var name = this.selecrepo.name;
-        var token = "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";
+        var token = "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";
         var everyproblem = []
         var currentPage = 1
         var totalPages = 1
@@ -119,10 +119,10 @@ export default {
           title: problem.title,
           state: problem.state,
         }))
-        console.log("Issues fetched: ", this.allproblems.length)
-        console.log("All issues: ", this.allproblems)
-        console.log("perPage:", this.perPage);
-        console.log("allproblems.length:", this.allproblems.length)
+        // console.log("Issues fetched: ", this.allproblems.length)
+        // console.log("All issues: ", this.allproblems)
+        // console.log("perPage:", this.perPage);
+        // console.log("allproblems.length:", this.allproblems.length)
       } catch (err)
       {
         console.log("Failure: ", err);
