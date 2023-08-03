@@ -76,7 +76,7 @@ export default {
       this.err.look = null;
       this.loadrepos = true;
       try{
-        var token = "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"
+        var token = "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"
         var res = await fetch(
           `https://api.github.com/search/repositories?q=${google}&page=${page}&per_page=${perpage}`,
           {
@@ -118,7 +118,7 @@ export default {
       this.loadproblems = true;
       try
       {
-        var token = "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";
+        var token = "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";
         var res = await fetch(`https://api.github.com/repos/${owner}/${name}/issues?state=${hide}&page=${page}&per_page=${perpage}`, {
           headers: {
             Authorization: `token ${token}`,
