@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div class="container mt-4">
     <div v-if="selecrepo">
       <h3>Open vs. Closed Issues</h3>
@@ -23,7 +23,7 @@ export default {
     return {
       openproblems: 0,
       closedproblems: 0,
-      chartInstance: null, // Keep track of the chart instance
+      chartInstance: null
     };
   },
   watch: {
@@ -108,11 +108,9 @@ export default {
     },
     renderChart() {
       if (this.chartInstance) {
-        // If the chart already exists, update its data instead of creating a new one
         this.chartInstance.data.datasets[0].data = [this.openproblems, this.closedproblems];
         this.chartInstance.update();
       } else {
-        // If the chart doesn't exist, create a new one
         var context = this.$refs.chartCanvas.getContext('2d');
         this.chartInstance = new Chart(context, {
           type: 'doughnut',
@@ -135,4 +133,4 @@ export default {
     },
   },
 };
-</script>
+</script> -->
